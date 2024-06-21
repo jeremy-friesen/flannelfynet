@@ -20,6 +20,7 @@ s = requests.session()
 CLIENT_ID = ""
 CLIENT_SECRET = ""
 LASTFM_KEY = ""
+CHECK_LIKED_SONGS = False
 
 
 @app.route('/')
@@ -35,9 +36,13 @@ def login():
 def spotify_results(token):
     """Open results page with Spotify data."""
     user = Spotify(token)
-    user.get_eligible_albums()
+    
+    if (CHECK_LIKED_SONGS):
+        user.get_elligible_albums_from_liked_songs()
+    else:
+        user.get_eligible_albums()
     scored_albums, unscored_albums = get_user_scores(user.eligible_albums)
-
+    
     if len(user.eligible_albums) < 1:
         return render_template('error.html', message="you have no eligible albums")
 
